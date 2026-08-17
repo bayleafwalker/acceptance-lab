@@ -1,0 +1,110 @@
+{
+  "schema_version": "1",
+  "id": "current-authority",
+  "version": "1.0.0",
+  "title": "Answer from current ratified authority",
+  "workload": "retrieval",
+  "description": "Retrieve the current architectural role while refusing to promote a semantically relevant superseded source.",
+  "inputs": {
+    "query": "What is the current architectural role of outctl for context management and compression of agent tool output?",
+    "as_of": "2026-08-17"
+  },
+  "checks": [
+    {
+      "id": "current-facts",
+      "type": "required_fact_coverage",
+      "dimension": "quality",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {
+        "facts": [
+          "outctl is an addressed command-evidence substrate",
+          "compression is an optional presentation policy"
+        ]
+      }
+    },
+    {
+      "id": "superseded-claim-absent",
+      "type": "forbidden_fact_absence",
+      "dimension": "quality",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {
+        "facts": [
+          "outctl is the general context-management layer required for all agent tool output"
+        ]
+      }
+    },
+    {
+      "id": "current-authority-cited",
+      "type": "required_evidence_recall",
+      "dimension": "authority",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {
+        "evidence_ids": [
+          "adr-outctl-pivot-v4"
+        ]
+      }
+    },
+    {
+      "id": "superseded-authority-blocked",
+      "type": "forbidden_authority_absence",
+      "dimension": "authority",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {
+        "evidence_ids": [
+          "adr-outctl-compression-v1"
+        ]
+      }
+    },
+    {
+      "id": "facts-have-citations",
+      "type": "required_fact_citations",
+      "dimension": "authority",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {
+        "facts": [
+          "outctl is an addressed command-evidence substrate",
+          "compression is an optional presentation policy"
+        ]
+      }
+    },
+    {
+      "id": "answer-required",
+      "type": "abstention_match",
+      "dimension": "quality",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {
+        "expected": false
+      }
+    },
+    {
+      "id": "latency-budget",
+      "type": "max_latency",
+      "dimension": "economics",
+      "threshold": 1.0,
+      "hard_gate": false,
+      "params": {
+        "max_ms": 50
+      }
+    },
+    {
+      "id": "cost-budget",
+      "type": "max_cost",
+      "dimension": "economics",
+      "threshold": 1.0,
+      "hard_gate": false,
+      "params": {
+        "max_usd": 0.01
+      }
+    }
+  ],
+  "metadata": {
+    "owner": "architecture",
+    "risk_class": "knowledge-authority"
+  }
+}

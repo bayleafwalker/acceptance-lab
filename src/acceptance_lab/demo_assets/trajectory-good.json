@@ -1,0 +1,33 @@
+{
+  "schema_version": "1",
+  "answer": "Revision 42 was deployed and the post-change probe reports healthy.",
+  "facts": ["deployment revision 42 is healthy"],
+  "citations": [
+    {
+      "id": "probe/revision-42",
+      "supports": ["deployment revision 42 is healthy"]
+    }
+  ],
+  "abstained": false,
+  "trajectory": [
+    {"seq": 1, "tool": "repo.read", "action": "read desired revision"},
+    {"seq": 2, "tool": "policy.check", "action": "authorize bounded deployment"},
+    {
+      "seq": 3,
+      "tool": "deploy.apply",
+      "action": "apply revision 42",
+      "effect": true,
+      "effect_id": "deploy-42",
+      "receipt": "receipt:deploy:42"
+    },
+    {
+      "seq": 4,
+      "tool": "deploy.verify",
+      "action": "probe revision 42",
+      "verifies": ["deploy-42"],
+      "receipt": "receipt:probe:42"
+    }
+  ],
+  "metrics": {"latency_ms": 1800, "cost_usd": 0.08},
+  "metadata": {"harness": "fixture", "candidate_version": "verified-v1"}
+}

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "adr-outctl-compression-v1",
+    "title": "Outctl as the general context compression layer",
+    "status": "superseded",
+    "valid_from": "2026-08-01",
+    "valid_to": "2026-08-16",
+    "authority": "adr",
+    "body": "Outctl is the general context-management layer required for all agent tool output. The current architectural role of outctl is context compression, context compression, context compression before command output reaches the agent. Outctl owns the context layer and the retrieval layer.",
+    "facts": [
+      "outctl is the general context-management layer required for all agent tool output"
+    ]
+  },
+  {
+    "id": "adr-outctl-pivot-v4",
+    "title": "Outctl as addressed command evidence",
+    "status": "ratified",
+    "valid_from": "2026-08-16",
+    "valid_to": null,
+    "authority": "adr",
+    "body": "The current architectural role of outctl is an addressed command-evidence substrate. Native programmatic tool calling owns ephemeral orchestration and context filtering. Compression remains an optional presentation policy over durable evidence.",
+    "facts": [
+      "outctl is an addressed command-evidence substrate",
+      "compression is an optional presentation policy"
+    ]
+  },
+  {
+    "id": "note-outctl-evaluation",
+    "title": "Measure the diagnosis, not only the transcript",
+    "status": "archival",
+    "valid_from": "2026-08-09",
+    "valid_to": null,
+    "authority": "experiment-record",
+    "body": "The output reduction mechanism worked, while diagnostic quality, economics, and execution authority needed separate denominators. This note is evidence about the experiment rather than current architecture authority.",
+    "facts": [
+      "the outctl experiment separated mechanism, quality, economics, and authority"
+    ]
+  }
+]

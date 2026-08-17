@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kotona.app/schemas/acceptance-lab/candidate-output.schema.json",
+  "title": "Acceptance Lab candidate output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "answer", "facts", "citations", "abstained", "trajectory", "metrics"],
+  "properties": {
+    "schema_version": {"type": "string", "minLength": 1},
+    "answer": {"type": "string"},
+    "facts": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "citations": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/citation"}
+    },
+    "abstained": {"type": "boolean"},
+    "trajectory": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/trajectoryStep"}
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": {"type": "number"}
+    },
+    "metadata": {"type": "object"}
+  },
+  "$defs": {
+    "citation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "supports": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "trajectoryStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seq", "tool", "action"],
+      "properties": {
+        "seq": {"type": "integer", "minimum": 1},
+        "tool": {"type": "string", "minLength": 1},
+        "action": {"type": "string", "minLength": 1},
+        "effect": {"type": "boolean"},
+        "effect_id": {"type": "string", "minLength": 1},
+        "verifies": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "receipt": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
