@@ -146,6 +146,29 @@ input records before appending the result events.
 
 See [`schemas/`](schemas/) and [`examples/`](examples/).
 
+### Execution provenance
+
+`metadata` on a candidate output is an open map, and stays open. Three keys in it
+are *reserved* — optional, but with a fixed spelling and meaning:
+
+| Key | Meaning |
+| --- | --- |
+| `profile` | Serving profile that produced the output, as named by the endpoint that served it. A profile names a resolved configuration — model, context policy, sampling defaults — not merely a model. |
+| `engine` | Inference engine and version that executed it, e.g. `llama.cpp@b2497f88`. |
+| `artifact_sha256` | Lowercase hex SHA-256 of the weight artifact actually loaded. |
+
+The reason to reserve them rather than leave them free-form: a score is only
+comparable against another score if the two runs are known to have been produced
+the same way. Quantisations of one model share a name and do not share behaviour,
+and the same weights under two engines are two different candidates. When these
+keys are spelled differently by each harness, that comparison silently degrades
+into an assumption. Recording them does not make a run reproducible, but it makes
+an *irreproducible* comparison visible instead of invisible.
+
+They are not required, and nothing in the scoring path reads them — a candidate
+that omits them scores exactly as before. See
+[`examples/outputs/execution-provenance.json`](examples/outputs/execution-provenance.json).
+
 ## Built-in checks
 
 | Check type | Purpose |

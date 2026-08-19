@@ -25,7 +25,27 @@
       "type": "object",
       "additionalProperties": {"type": "number"}
     },
-    "metadata": {"type": "object"}
+    "metadata": {
+      "type": "object",
+      "description": "Open provenance map describing how this candidate output was produced. Additional keys remain allowed; the properties named here are reserved so that the same fact is spelled the same way across harnesses, which is what makes cross-run comparison well-defined. All are optional.",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Serving profile that produced the output, as named by the endpoint that served it (e.g. \"worker-fast\"). A profile names a resolved configuration -- model, context policy, sampling defaults -- not merely a model."
+        },
+        "engine": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Inference engine and version that executed the profile (e.g. \"llama.cpp@b2497f88\", \"vllm-0.14.1\"). Two profiles may name the same weights yet differ here, and that difference is frequently the explanation for a scoring delta."
+        },
+        "artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "Lowercase hex SHA-256 of the weight artifact actually loaded. Quantisations of one model share a name and do not share behaviour; this is the field that distinguishes them."
+        }
+      }
+    }
   },
   "$defs": {
     "citation": {
