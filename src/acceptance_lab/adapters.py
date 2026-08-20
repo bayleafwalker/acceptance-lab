@@ -176,17 +176,12 @@ def candidate_from_trace(
         trace_event_ids.append(event_id)
         tool_identities.append(tool_identity)
 
-    # Candidate metadata is not an authority source.  Preserve harmless
-    # candidate annotations, but remove provenance-shaped claims unless the
-    # observed trace replaces them below.
-    candidate_metadata = candidate_map.get("metadata", {})
-    candidate_metadata = _mapping(candidate_metadata, "candidate.metadata")
-    metadata = {
-        key: deepcopy(value)
-        for key, value in candidate_metadata.items()
-        if key not in _PROVENANCE_KEYS
-        and key not in {"trace_id", "trace_event_ids", "tool_identities"}
-    }
+    # Candidate metadata is not an authority source.  Do not copy an
+    # arbitrary metadata map: fields such as runner_id, receipt_digest,
+    # trace_url, or harness could otherwise sit beside trusted values and be
+    # mistaken for runner evidence by a downstream consumer.  The adapter's
+    # metadata is an explicit allowlist populated only from the observed trace.
+    metadata: dict[str, Any] = {}
     metadata.update(observed_provenance)
     metadata.update(
         {

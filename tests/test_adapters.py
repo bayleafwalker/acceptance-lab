@@ -64,9 +64,20 @@ class TraceAdapterTests(unittest.TestCase):
             candidate_from_trace(self.candidate, self.trace)
 
     def test_candidate_provenance_claims_do_not_cross_boundary(self) -> None:
+        self.candidate["metadata"].update(
+            {
+                "runner_id": "spoofed-runner",
+                "receipt_digest": "spoofed-digest",
+                "trace_url": "https://spoofed.invalid/trace",
+                "harness": "spoofed-harness",
+            }
+        )
         result = candidate_from_trace(self.candidate, self.trace)
         self.assertEqual("fixture-model-v1", result["metadata"]["model"])
         self.assertEqual("worker-readonly", result["metadata"]["profile"])
+        for key in ("runner_id", "receipt_digest", "trace_url", "harness"):
+            with self.subTest(key=key):
+                self.assertNotIn(key, result["metadata"])
 
     def test_missing_effect_receipt_is_left_for_deterministic_scorer(self) -> None:
         self.trace["tool_calls"][0]["effect"] = True

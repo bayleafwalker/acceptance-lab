@@ -56,11 +56,12 @@ The current package-level adapter contract is intentionally explicit:
 }
 ```
 
-The candidate's own trajectory is ignored. Tool identity is not accepted as a
-bare string, and receipt strings are not accepted without an explicit runner
-owner. An effect may have no receipt in the adapted output; the deterministic
-`effect_receipts` check then reports the failure instead of the adapter
-inventing evidence.
+The candidate's own trajectory and arbitrary metadata are ignored. Tool
+identity is not accepted as a bare string, and receipt strings are not accepted
+without an explicit runner owner. An effect may have no receipt in the adapted
+output; the deterministic `effect_receipts` check then reports the failure
+instead of the adapter inventing evidence. Only the explicit observed
+provenance allowlist and trace references are emitted into metadata.
 
 ## Deliberate schema gap
 
