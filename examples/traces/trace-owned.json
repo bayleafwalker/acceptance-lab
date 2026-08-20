@@ -1,0 +1,35 @@
+{
+  "trace_id": "trace:acceptance-lab:read-001",
+  "provenance": {
+    "model": "fixture-model-v1",
+    "prompt_version": "prompt-v3",
+    "harness_version": "runner-harness-v2",
+    "tool_set_version": "readonly-tools-v1",
+    "corpus_version": "corpus-2026-08-20",
+    "profile": "worker-readonly",
+    "engine": "fixture-engine@v1",
+    "artifact_sha256": "3f9c2b7a1e4d8065c3a5f27b90de14683cb27a5f0e9d4c1b8a6f30d275e4b9c1"
+  },
+  "tool_calls": [
+    {
+      "event_id": "span:tool:001",
+      "observed_by": "runner",
+      "seq": 1,
+      "tool": {
+        "name": "corpus.search",
+        "identity": "runner-tool-registry/corpus.search@v1"
+      },
+      "action": "locate the retry runbook"
+    },
+    {
+      "event_id": "span:tool:002",
+      "observed_by": "trace",
+      "seq": 2,
+      "tool": {
+        "name": "corpus.read",
+        "identity": "runner-tool-registry/corpus.read@v1"
+      },
+      "action": "read the retry budget section"
+    }
+  ]
+}
