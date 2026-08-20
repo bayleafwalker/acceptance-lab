@@ -1,0 +1,71 @@
+{
+  "abstained": false,
+  "answer": "At commit 4412ca1, the independent review supersedes the stale G1 pass claim. G1 is unproven, G7 and G8 are pending, and the final verdict is withheld.",
+  "citations": [
+    {
+      "id": "takeover:review-status@4412ca1",
+      "supports": [
+        "ACCEPT-G1 is not proven",
+        "the final takeover verdict is withheld"
+      ]
+    },
+    {
+      "id": "takeover:limitations@4412ca1",
+      "supports": [
+        "ACCEPT-G7 is pending",
+        "ACCEPT-G8 is pending",
+        "the final takeover verdict is withheld"
+      ]
+    }
+  ],
+  "facts": [
+    "ACCEPT-G1 is not proven",
+    "ACCEPT-G7 is pending",
+    "ACCEPT-G8 is pending",
+    "the final takeover verdict is withheld"
+  ],
+  "metadata": {
+    "corpus_version": "takeover@4412ca1",
+    "harness_version": "acceptance-lab-campaign@2026-08-20",
+    "model": "deterministic-campaign-reducer",
+    "profile": "deterministic-read-only",
+    "prompt_version": "current-state-reduction@1",
+    "tool_identities": [
+      "campaign/json-reader@1",
+      "campaign/json-reader@1",
+      "campaign/json-reader@1"
+    ],
+    "tool_set_version": "read-only-evidence@1",
+    "trace_event_ids": [
+      "reduced:review-status",
+      "reduced:gate-status",
+      "reduced:limitations"
+    ],
+    "trace_id": "trace:takeover-current-state:4412ca1"
+  },
+  "metrics": {},
+  "schema_version": "1",
+  "trajectory": [
+    {
+      "action": "read the independent review override",
+      "effect": false,
+      "seq": 1,
+      "tool": "evidence.read",
+      "verifies": []
+    },
+    {
+      "action": "read the gate-status snapshot as superseded evidence",
+      "effect": false,
+      "seq": 2,
+      "tool": "evidence.read",
+      "verifies": []
+    },
+    {
+      "action": "read the declared incomplete gates and limitations",
+      "effect": false,
+      "seq": 3,
+      "tool": "evidence.read",
+      "verifies": []
+    }
+  ]
+}

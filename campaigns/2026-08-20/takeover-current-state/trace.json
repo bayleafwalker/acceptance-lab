@@ -1,0 +1,34 @@
+{
+  "trace_id": "trace:takeover-current-state:4412ca1",
+  "provenance": {
+    "model": "deterministic-campaign-reducer",
+    "prompt_version": "current-state-reduction@1",
+    "harness_version": "acceptance-lab-campaign@2026-08-20",
+    "tool_set_version": "read-only-evidence@1",
+    "corpus_version": "takeover@4412ca1",
+    "profile": "deterministic-read-only"
+  },
+  "tool_calls": [
+    {
+      "event_id": "reduced:review-status",
+      "observed_by": "runner",
+      "seq": 1,
+      "tool": {"name": "evidence.read", "identity": "campaign/json-reader@1"},
+      "action": "read the independent review override"
+    },
+    {
+      "event_id": "reduced:gate-status",
+      "observed_by": "runner",
+      "seq": 2,
+      "tool": {"name": "evidence.read", "identity": "campaign/json-reader@1"},
+      "action": "read the gate-status snapshot as superseded evidence"
+    },
+    {
+      "event_id": "reduced:limitations",
+      "observed_by": "runner",
+      "seq": 3,
+      "tool": {"name": "evidence.read", "identity": "campaign/json-reader@1"},
+      "action": "read the declared incomplete gates and limitations"
+    }
+  ]
+}

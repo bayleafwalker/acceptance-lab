@@ -1,0 +1,30 @@
+{
+  "schema_version": "1",
+  "answer": "The bounded Git-aware manifest repair passed its mechanical gates; the run remains experimental and is not formal route qualification.",
+  "facts": [
+    "Git administrative metadata is excluded from payload manifest verification",
+    "an injected unmanifested payload is rejected",
+    "formal AgentOps route qualification remains unproven"
+  ],
+  "citations": [
+    {
+      "id": "receipt:local-dogfood",
+      "supports": ["formal AgentOps route qualification remains unproven"]
+    },
+    {
+      "id": "gate:tests-12",
+      "supports": ["Git administrative metadata is excluded from payload manifest verification"]
+    },
+    {
+      "id": "gate:manifest-positive",
+      "supports": ["Git administrative metadata is excluded from payload manifest verification"]
+    },
+    {
+      "id": "gate:manifest-negative",
+      "supports": ["an injected unmanifested payload is rejected"]
+    }
+  ],
+  "abstained": false,
+  "trajectory": [{"seq": 1, "tool": "candidate.untrusted", "action": "ignored by adapter"}],
+  "metrics": {"latency_ms": 26235, "cost_usd": 0}
+}

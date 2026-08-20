@@ -1,0 +1,107 @@
+{
+  "abstained": false,
+  "answer": "The bounded Git-aware manifest repair passed its mechanical gates; the run remains experimental and is not formal route qualification.",
+  "citations": [
+    {
+      "id": "receipt:local-dogfood",
+      "supports": [
+        "formal AgentOps route qualification remains unproven"
+      ]
+    },
+    {
+      "id": "gate:tests-12",
+      "supports": [
+        "Git administrative metadata is excluded from payload manifest verification"
+      ]
+    },
+    {
+      "id": "gate:manifest-positive",
+      "supports": [
+        "Git administrative metadata is excluded from payload manifest verification"
+      ]
+    },
+    {
+      "id": "gate:manifest-negative",
+      "supports": [
+        "an injected unmanifested payload is rejected"
+      ]
+    }
+  ],
+  "facts": [
+    "Git administrative metadata is excluded from payload manifest verification",
+    "an injected unmanifested payload is rejected",
+    "formal AgentOps route qualification remains unproven"
+  ],
+  "metadata": {
+    "corpus_version": "cluster-alignment-mvp@68cbd26",
+    "harness_version": "opencode@1.18.18",
+    "model": "local3090/worker-fast",
+    "profile": "worker-fast",
+    "prompt_version": "task-packet:d1df4c30e15507ca0e25636caef42f3af4861bc1652038583561c69dc2267e55",
+    "tool_identities": [
+      "opencode/read@1.18.18",
+      "opencode/edit-write@1.18.18",
+      "coordinator/python-unittest@2026-08-20",
+      "coordinator/manifest-verifier@0a05a37",
+      "coordinator/manifest-verifier@0a05a37"
+    ],
+    "tool_set_version": "ao-mechanical-bulk@2026-08-20",
+    "trace_event_ids": [
+      "reduced:read-inputs",
+      "reduced:worker-patch",
+      "reduced:test-gate",
+      "reduced:positive-manifest-gate",
+      "reduced:negative-manifest-gate"
+    ],
+    "trace_id": "trace:local-inference-dogfood:b90b35a1"
+  },
+  "metrics": {
+    "cost_usd": 0.0,
+    "latency_ms": 26235.0
+  },
+  "schema_version": "1",
+  "trajectory": [
+    {
+      "action": "read the bounded repository inputs",
+      "effect": false,
+      "seq": 1,
+      "tool": "repository.read",
+      "verifies": []
+    },
+    {
+      "action": "produce the Git-aware manifest patch",
+      "effect": true,
+      "effect_id": "worker-patch",
+      "receipt": "sha256:6187cf2dfc594d6e3208178cca7c83d9d957fbd75b8f1a5d22590ca4db8f8398",
+      "seq": 2,
+      "tool": "repository.edit",
+      "verifies": []
+    },
+    {
+      "action": "run the twelve-test suite",
+      "effect": false,
+      "receipt": "sha256:527e4215203b829391220b8a52b566b60db002cc0678b483bf3942dcbb78dc24",
+      "seq": 3,
+      "tool": "repository.verify",
+      "verifies": [
+        "worker-patch"
+      ]
+    },
+    {
+      "action": "verify the positive manifest gate",
+      "effect": false,
+      "receipt": "sha256:05f9d43f3354c8c5330a3481b3c4798d9e955418d01416c0b17a1396d29b35af",
+      "seq": 4,
+      "tool": "repository.verify",
+      "verifies": []
+    },
+    {
+      "action": "verify rejection of an injected unexpected payload",
+      "effect": false,
+      "receipt": "sha256:0e262d59b68234b194369a2dc78ddc309b864c3f8b9d370ae55776d4ea299558",
+      "seq": 5,
+      "tool": "repository.verify",
+      "verifies": []
+    }
+  ]
+}

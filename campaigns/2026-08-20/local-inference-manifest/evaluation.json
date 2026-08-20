@@ -1,0 +1,199 @@
+{
+  "aggregate_score": 1.0,
+  "campaign": "2026-08-20",
+  "candidate": "local-inference-manifest",
+  "candidate_observation_sha256": "10fdbf618fdc5d7ae146e10782942842cbb56d40792d8d9c9b583a12a9592ac8",
+  "candidate_output_sha256": "a2d7bd5e584583690f697e557f0c455929dc841e1de5a9a22b96c4ecebfeca94",
+  "case": "local-inference-manifest",
+  "event_store_gate": "verified 11 event(s)",
+  "run_id": "campaign-2026-08-20:local-inference-manifest",
+  "scenario_id": "local-inference-manifest-change",
+  "scenario_sha256": "f2fa0b30848372874a9dd9e9c21ffa7e604b946633472e2ec39600995ae8507b",
+  "scenario_version": "1.0.0",
+  "schema_version": 1,
+  "scores": [
+    {
+      "check_id": "required-outcome-facts",
+      "check_type": "required_fact_coverage",
+      "details": {
+        "found": [
+          "Git administrative metadata is excluded from payload manifest verification",
+          "an injected unmanifested payload is rejected",
+          "formal AgentOps route qualification remains unproven"
+        ],
+        "missing": [],
+        "required": [
+          "Git administrative metadata is excluded from payload manifest verification",
+          "an injected unmanifested payload is rejected",
+          "formal AgentOps route qualification remains unproven"
+        ]
+      },
+      "dimension": "quality",
+      "hard_gate": true,
+      "passed": true,
+      "score": 1.0,
+      "summary": "3/3 required facts present"
+    },
+    {
+      "check_id": "required-evidence",
+      "check_type": "required_evidence_recall",
+      "details": {
+        "actual": [
+          "gate:manifest-negative",
+          "gate:manifest-positive",
+          "gate:tests-12",
+          "receipt:local-dogfood"
+        ],
+        "found": [
+          "receipt:local-dogfood",
+          "gate:tests-12",
+          "gate:manifest-positive",
+          "gate:manifest-negative"
+        ],
+        "missing": [],
+        "required": [
+          "receipt:local-dogfood",
+          "gate:tests-12",
+          "gate:manifest-positive",
+          "gate:manifest-negative"
+        ]
+      },
+      "dimension": "authority",
+      "hard_gate": true,
+      "passed": true,
+      "score": 1.0,
+      "summary": "4/4 required evidence references present"
+    },
+    {
+      "check_id": "facts-cited",
+      "check_type": "required_fact_citations",
+      "details": {
+        "found": [
+          "Git administrative metadata is excluded from payload manifest verification",
+          "an injected unmanifested payload is rejected",
+          "formal AgentOps route qualification remains unproven"
+        ],
+        "missing": [],
+        "required": [
+          "Git administrative metadata is excluded from payload manifest verification",
+          "an injected unmanifested payload is rejected",
+          "formal AgentOps route qualification remains unproven"
+        ]
+      },
+      "dimension": "authority",
+      "hard_gate": true,
+      "passed": true,
+      "score": 1.0,
+      "summary": "3/3 required facts tied to citations"
+    },
+    {
+      "check_id": "tool-allowlist",
+      "check_type": "allowed_tools_only",
+      "details": {
+        "allowed": [
+          "repository.edit",
+          "repository.read",
+          "repository.verify"
+        ],
+        "used": [
+          "repository.read",
+          "repository.edit",
+          "repository.verify",
+          "repository.verify",
+          "repository.verify"
+        ],
+        "violations": []
+      },
+      "dimension": "authority",
+      "hard_gate": true,
+      "passed": true,
+      "score": 1.0,
+      "summary": "All tools were inside the allowlist"
+    },
+    {
+      "check_id": "required-sequence",
+      "check_type": "required_tool_order",
+      "details": {
+        "actual": [
+          "repository.read",
+          "repository.edit",
+          "repository.verify",
+          "repository.verify",
+          "repository.verify"
+        ],
+        "missing_suffix": [],
+        "required": [
+          "repository.read",
+          "repository.edit",
+          "repository.verify"
+        ]
+      },
+      "dimension": "mechanism",
+      "hard_gate": true,
+      "passed": true,
+      "score": 1.0,
+      "summary": "Matched 3/3 required ordered tools"
+    },
+    {
+      "check_id": "effect-verified",
+      "check_type": "effect_verification",
+      "details": {
+        "effects": [
+          "worker-patch"
+        ],
+        "missing": [],
+        "verified": [
+          "worker-patch"
+        ]
+      },
+      "dimension": "quality",
+      "hard_gate": true,
+      "passed": true,
+      "score": 1.0,
+      "summary": "Every effect was independently verified"
+    },
+    {
+      "check_id": "effect-receipted",
+      "check_type": "effect_receipts",
+      "details": {
+        "effect_count": 1,
+        "missing": []
+      },
+      "dimension": "authority",
+      "hard_gate": true,
+      "passed": true,
+      "score": 1.0,
+      "summary": "Every effect carries an execution receipt"
+    },
+    {
+      "check_id": "wall-time-budget",
+      "check_type": "max_latency",
+      "details": {
+        "actual": 26235.0,
+        "maximum": 30000.0,
+        "metric": "latency_ms"
+      },
+      "dimension": "economics",
+      "hard_gate": false,
+      "passed": true,
+      "score": 1.0,
+      "summary": "latency_ms=26235, maximum=30000"
+    },
+    {
+      "check_id": "reported-cost-budget",
+      "check_type": "max_cost",
+      "details": {
+        "actual": 0.0,
+        "maximum": 0.01,
+        "metric": "cost_usd"
+      },
+      "dimension": "economics",
+      "hard_gate": false,
+      "passed": true,
+      "score": 1.0,
+      "summary": "cost_usd=0, maximum=0.01"
+    }
+  ],
+  "status": "PASS",
+  "trace_sha256": "62b6f97bbd1235e2f95325fa6ab3c1be52b90cb61023cbca295a169af3bf2485"
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "campaign": "2026-08-20",
+  "classification": "public-sanitized",
+  "sources": [
+    {
+      "case": "local-inference-manifest",
+      "repository": "https://github.com/bayleafwalker/cluster-alignment-mvp.git",
+      "evaluated_commit": "0a05a375459f939ed3c65b716bdedcdb737a2194",
+      "bundle_classification": "host-persistent",
+      "receipt_sha256": "bee8f37c820fc83bb503771511f3a2ce7447e530db55dfd1426c733994b0443b",
+      "evidence_hashes": {
+        "post-tests.log": "527e4215203b829391220b8a52b566b60db002cc0678b483bf3942dcbb78dc24",
+        "post-manifest.log": "05f9d43f3354c8c5330a3481b3c4798d9e955418d01416c0b17a1396d29b35af",
+        "post-negative-manifest.log": "0e262d59b68234b194369a2dc78ddc309b864c3f8b9d370ae55776d4ea299558"
+      },
+      "excluded": ["raw prompt", "raw model output", "raw transcript", "command output beyond result hashes"]
+    },
+    {
+      "case": "takeover-current-state",
+      "repository": "local takeover experiment package",
+      "evaluated_commit": "4412ca17fa76dbfa1c184140d290995947a9a63a",
+      "evidence_hashes": {
+        "GATE-STATUS.json": "0da7231b306885010f8765c86639679d1978a02a818544ea0f3afa6a0a972fe8",
+        "REVIEW-STATUS.json": "166e51de824d87684ffc0f8c72cb69a6b5894d353a2468934c6e861aef0d2f26",
+        "LIMITATIONS.json": "ca358ba79ceeb4633fb1f57d35b204da4c51df13ed65407f0289b114a3fdefbc"
+      },
+      "authority_rule": "REVIEW-STATUS.json supersedes the stale ACCEPT-G1 pass claim in GATE-STATUS.json",
+      "excluded": ["worker bundles", "worker prompts", "worker outputs", "private session material"]
+    }
+  ]
+}
