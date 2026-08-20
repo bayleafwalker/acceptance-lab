@@ -1,0 +1,18 @@
+{
+  "schema_version": "1",
+  "answer": "At commit 4412ca1, the independent review supersedes the stale G1 pass claim. G1 is unproven, G7 and G8 are pending, and the final verdict is withheld.",
+  "facts": ["ACCEPT-G1 is not proven", "ACCEPT-G7 is pending", "ACCEPT-G8 is pending", "the final takeover verdict is withheld"],
+  "citations": [
+    {
+      "id": "takeover:review-status@4412ca1",
+      "supports": ["ACCEPT-G1 is not proven", "the final takeover verdict is withheld"]
+    },
+    {
+      "id": "takeover:limitations@4412ca1",
+      "supports": ["ACCEPT-G7 is pending", "ACCEPT-G8 is pending", "the final takeover verdict is withheld"]
+    }
+  ],
+  "abstained": false,
+  "trajectory": [{"seq": 1, "tool": "candidate.untrusted", "action": "ignored by adapter"}],
+  "metrics": {}
+}

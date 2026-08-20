@@ -1,0 +1,87 @@
+{
+  "schema_version": "1",
+  "id": "local-inference-manifest-change",
+  "version": "1.0.0",
+  "title": "Bounded local-inference manifest repair",
+  "workload": "agent-trajectory",
+  "description": "Accept the bounded patch only when its claimed behavior, evidence, tool path, receipt, verification, and qualification limitation are all explicit.",
+  "inputs": {
+    "repository": "cluster-alignment-mvp",
+    "evaluated_commit": "0a05a375459f939ed3c65b716bdedcdb737a2194"
+  },
+  "checks": [
+    {
+      "id": "required-outcome-facts",
+      "type": "required_fact_coverage",
+      "dimension": "quality",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {"facts": ["Git administrative metadata is excluded from payload manifest verification", "an injected unmanifested payload is rejected", "formal AgentOps route qualification remains unproven"]}
+    },
+    {
+      "id": "required-evidence",
+      "type": "required_evidence_recall",
+      "dimension": "authority",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {"evidence_ids": ["receipt:local-dogfood", "gate:tests-12", "gate:manifest-positive", "gate:manifest-negative"]}
+    },
+    {
+      "id": "facts-cited",
+      "type": "required_fact_citations",
+      "dimension": "authority",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {"facts": ["Git administrative metadata is excluded from payload manifest verification", "an injected unmanifested payload is rejected", "formal AgentOps route qualification remains unproven"]}
+    },
+    {
+      "id": "tool-allowlist",
+      "type": "allowed_tools_only",
+      "dimension": "authority",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {"tools": ["repository.read", "repository.edit", "repository.verify"]}
+    },
+    {
+      "id": "required-sequence",
+      "type": "required_tool_order",
+      "dimension": "mechanism",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {"tools": ["repository.read", "repository.edit", "repository.verify"]}
+    },
+    {
+      "id": "effect-verified",
+      "type": "effect_verification",
+      "dimension": "quality",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {}
+    },
+    {
+      "id": "effect-receipted",
+      "type": "effect_receipts",
+      "dimension": "authority",
+      "threshold": 1.0,
+      "hard_gate": true,
+      "params": {}
+    },
+    {
+      "id": "wall-time-budget",
+      "type": "max_latency",
+      "dimension": "economics",
+      "threshold": 1.0,
+      "hard_gate": false,
+      "params": {"max_ms": 30000}
+    },
+    {
+      "id": "reported-cost-budget",
+      "type": "max_cost",
+      "dimension": "economics",
+      "threshold": 1.0,
+      "hard_gate": false,
+      "params": {"max_usd": 0.01}
+    }
+  ],
+  "metadata": {"owner": "evaluation-campaign", "risk_class": "bounded-repository-write"}
+}

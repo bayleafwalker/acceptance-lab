@@ -1,9 +1,9 @@
 PYTHON ?= python3
 export PYTHONPATH := src
 
-.PHONY: validate test schema demo compile clean
+.PHONY: validate test schema demo campaign compile clean
 
-validate: compile test schema demo
+validate: compile test schema demo campaign
 
 test:
 	$(PYTHON) -m unittest discover -s tests -v
@@ -16,6 +16,9 @@ compile:
 
 demo:
 	$(PYTHON) -m acceptance_lab demo --workspace .demo
+
+campaign:
+	$(PYTHON) scripts/run_campaign.py
 
 clean:
 	rm -rf .demo .acceptance-lab build dist *.egg-info src/*.egg-info
