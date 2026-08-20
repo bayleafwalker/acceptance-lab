@@ -169,6 +169,30 @@ They are not required, and nothing in the scoring path reads them — a candidat
 that omits them scores exactly as before. See
 [`examples/outputs/execution-provenance.json`](examples/outputs/execution-provenance.json).
 
+### Read-only trace adapter
+
+`acceptance_lab.adapters.candidate_from_trace(candidate, trace)` is the narrow
+boundary for a live or replayed observation. It performs no tool calls and does
+not resolve or fetch trace data. The candidate contributes answer, facts,
+citations, abstention, and metrics; the adapter replaces its trajectory from
+`trace.tool_calls` and copies execution provenance from `trace.provenance`.
+
+Each observed tool call must carry a stable `event_id`, `observed_by` (`trace`
+or `runner`), and a structured tool `name` plus runner identity. A receipt is
+accepted only as `{ "owner": "runner", "id": "..." }`; a model-supplied
+trajectory or free-form receipt is never used. Trace IDs, event IDs, and tool
+identities remain in candidate metadata for later lookup. The deterministic
+scorer still decides whether an effect without a receipt passes.
+
+The current candidate schema cannot represent the full live evidence envelope:
+event timestamps, span/parent relationships, tool identity attestations,
+receipt issuer/digest, and raw trace payloads are intentionally not flattened
+into `trajectory`. The adapter preserves stable references and leaves the full
+trace with its owner. This is a documented schema gap, not an assertion that a
+fixture has captured live runner evidence. See
+[`docs/trace-adapter.md`](docs/trace-adapter.md) and
+[`examples/traces/trace-owned.json`](examples/traces/trace-owned.json).
+
 ## Built-in checks
 
 | Check type | Purpose |
