@@ -18,6 +18,7 @@ These tests cover the three things pinning has to do to be worth anything:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import tempfile
 import unittest
@@ -329,3 +330,27 @@ class HarnessRevisionTests(unittest.TestCase):
             with self.assertRaises(ValueError) as caught:
                 compare_payload(store, runs[0], runs[1])
             self.assertIn("evaluation-harness revisions", str(caught.exception))
+
+
+class DigestPortabilityTests(unittest.TestCase):
+    """A lock that depends on the interpreter locks nothing.
+
+    The first implementation digested `ast.dump`, which names node fields; those names
+    change between Python releases, so every digest shifted between 3.12 and 3.14 and
+    the lock failed on CI while passing locally. `ast.unparse` emits normalised source
+    instead, which is stable across versions and is also something a reader can inspect.
+    """
+
+    def test_the_digest_is_taken_over_source_not_over_a_tree_dump(self) -> None:
+        import ast
+
+        source = "def a_scorer(value: int) -> bool:\n    return value >= 1\n"
+        tree = ast.parse(source)
+        self.assertEqual(
+            hashlib.sha256(ast.unparse(tree).encode()).hexdigest(),
+            digest_source(source),
+        )
+        self.assertNotEqual(
+            hashlib.sha256(ast.dump(tree).encode()).hexdigest(),
+            digest_source(source),
+        )

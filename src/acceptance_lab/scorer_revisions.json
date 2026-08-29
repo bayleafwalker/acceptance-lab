@@ -4,59 +4,59 @@
   "scorers": {
     "required_fact_coverage": {
       "revision": 1,
-      "digest": "e8b1c9ae54e1047f731051a1dcd5800fcb63a5537423fe4f2e007b7bde669ebb"
+      "digest": "3199b5b86e5970cf93036e228cea60ef7208b9164c7465b63262b20268f1eceb"
     },
     "forbidden_fact_absence": {
       "revision": 1,
-      "digest": "a2393d5fbea01d7a0fc3c23f9a9c0adc1cd7c0fbc76b9957118c1999aad01091"
+      "digest": "8b26cb9cb92d6f7061c0621d2524e1cd287cb41da62c5b2dc09c5b5e83345544"
     },
     "required_evidence_recall": {
       "revision": 1,
-      "digest": "0880976a12c4e3052f1e45186cab5941fd146ba68031c6674d9b180178a0cd6f"
+      "digest": "e68ca677709796044f5c22140d7ce730ba62779cb627f46f552d0af3ee40f2d1"
     },
     "forbidden_authority_absence": {
       "revision": 1,
-      "digest": "09f8f58aee158314313d0a73254cb0b5dabfe94462037069b99a6272a6a7154f"
+      "digest": "041a82009b86e8d5a123381002c2e8e55a526a50d916124d8d6a2782890c4b57"
     },
     "required_fact_citations": {
       "revision": 1,
-      "digest": "5e97f25dd35b88818f32101f035a8a102f79fad666ad64a218eb2472db6651e6"
+      "digest": "184908b4b5354b6d224632511582e87cc2ba5a0069bb3e8f876c38a3c1c0ecaf"
     },
     "abstention_match": {
       "revision": 1,
-      "digest": "a1808020d0d62290428565320dc87e06e22b9aed4bcc51eb93d239032c5d2e15"
+      "digest": "03d05de9052e97b05826abd1c558001546623c0efc67974db03aafde163bc42a"
     },
     "allowed_tools_only": {
       "revision": 1,
-      "digest": "f314f410a77a1544d262d5b0233d2e5601dbc670e7016b89fbeb7c0ea181cb6d"
+      "digest": "97765397927aab151c4e9eeeb8128f8001057d9e8341f69799852f2627c82bed"
     },
     "forbidden_tools_absent": {
       "revision": 1,
-      "digest": "27bb786d4f338f57730792ece2cc2cb2d7c651908e95cc4f99d84a02ed7c7d51"
+      "digest": "30f0a379ca8b679e6d8c701eb28d368365f6d1a9b0221fd3633dec04877dd0e4"
     },
     "required_tool_order": {
       "revision": 1,
-      "digest": "b6ad614845d5e8408ca2a3d260006b122340a58d05ad2f62805a3b7b84179f43"
+      "digest": "16c9eb14edcda2ea23912ca1f0fa55e6e81e4724e408cb3dc873f5cd5efad0ac"
     },
     "effect_verification": {
       "revision": 1,
-      "digest": "1200f8fe68bc9533b417d5e71ceb86775f83bd211d2a6db77ee5dd8a8b223fda"
+      "digest": "35e7c840c68bdc259a11c453fc09b639cb649d08a66a0a8b7eb610045ecefc2d"
     },
     "effect_receipts": {
       "revision": 1,
-      "digest": "c2c7ebc4c94ca5ea1e15c9a1f4ce8bda0b045672783c7f8c0b493f2f236bbe73"
+      "digest": "8edf88b7e146752d9c3c66c28f78ec58662f514801c4cd4371f7e3eea93a836b"
     },
     "max_latency": {
       "revision": 1,
-      "digest": "5493fa96d995f414387efb0defb8b7f9ba2ad1dc9233af6fd266e4a23ea87eb7"
+      "digest": "b513f5d184ccfacc9235abedc515ceabc46a57b26f2c8d658a4e5603cb0b1c26"
     },
     "max_cost": {
       "revision": 1,
-      "digest": "7254b33da993a34953bba57cbe1c06b2a934ba12a15c6cf6ca348ecb0d62f7d1"
+      "digest": "3fecdb30adda38934a4e19195e9a3189ff494538e6b34079e8cb558da50a0fdc"
     }
   },
   "evaluation_harness": {
     "revision": 1,
-    "digest": "4f6323b26d670bc187f71062c2daec4e59d4e4f569c62ebeff21d187de0a8360"
+    "digest": "fbfd09c6f46cf754b813e5fd1468803c4230ca9d2b77a97a1e3b50b1e5901270"
   }
 }

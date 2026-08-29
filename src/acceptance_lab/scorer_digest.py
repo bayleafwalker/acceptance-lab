@@ -53,7 +53,13 @@ def digest_source(source: str) -> str:
     comparison is what moved the digest.
     """
     tree = _strip_docstrings(ast.parse(textwrap.dedent(source)))
-    return hashlib.sha256(ast.dump(tree, annotate_fields=True).encode()).hexdigest()
+    # `ast.unparse`, not `ast.dump`. Dumping the tree is the obvious move and it is
+    # wrong here: the dump names node fields, and those change between Python releases,
+    # so every digest shifted between 3.12 and 3.14 and the lock failed on CI while
+    # passing locally. A lock that depends on the interpreter locks nothing. Unparsing
+    # emits normalised source instead -- the same text on both, verified across 3.12 and
+    # 3.14 -- which is also the representation a reader can inspect for themselves.
+    return hashlib.sha256(ast.unparse(tree).encode()).hexdigest()
 
 
 def scorer_digest(function: Any) -> str:
