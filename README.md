@@ -215,6 +215,45 @@ Deterministic checks should stay deterministic. A future model judge may add a
 semantic assessment, but it must not overrule authority, evidence, or execution
 hard gates.
 
+### Scorer revisions
+
+Every score records the revision of the scorer that produced it, and every run
+records the revisions it used plus the revision of the evaluation harness that
+turned those scores into a status:
+
+```json
+{
+  "scorer_revisions": {"required_fact_coverage": 1, "effect_receipts": 1},
+  "harness_revision": 1,
+  "scores": [{"check_id": "outcome-fact", "scorer_revision": 1, "score": 1.0}]
+}
+```
+
+This exists because a scenario version is not enough. A scenario pinned at
+`1.0.0` scored by an edited scorer produces a verdict that looks identical to the
+one before the edit, and any settlement citing it cites a moving target. A
+revision is a plain integer, not a semantic version: a scorer has no
+backwards-compatible change, because any edit to what it measures can flip a
+verdict already recorded.
+
+Two things make the pin load-bearing rather than decorative:
+
+- `scorer_revisions.json` locks each scorer's behavioural digest — the parsed
+  syntax with docstrings removed, so reformatting and rewording are free and a
+  changed comparison is not. Editing a scorer without bumping its revision fails
+  the test suite. Regenerate with `python -m acceptance_lab.scorer_digest`, in
+  the same commit as the bump.
+- `compare` refuses runs whose revisions differ, rather than reporting the delta.
+  A change in the ruler and a change in the measured thing produce the same
+  number, so a comparison across revisions is not a comparison. A run recorded
+  before revisions existed carries none, and is refused too: unknown is not
+  equal.
+
+The harness is locked alongside the scorers because it decides the same thing
+they do — `score_candidate` applies the threshold and `evaluate_candidate`
+assigns `PASS` / `CONDITIONAL` / `FAIL`. Pinning only the thirteen callables
+would leave the identical hole in a smaller place.
+
 ## Architecture
 
 ```text

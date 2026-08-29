@@ -38,6 +38,8 @@ def render_run_markdown(store: EventStore, run_id: str) -> str:
         "",
         f"- **Run:** `{run['run_id']}`",
         f"- **Scenario:** `{run['scenario_id']}@{run['scenario_version']}`",
+        f"- **Evaluation harness:** revision "
+        f"{_revision_label(run['harness_revision'])}",
         f"- **Status:** **{run['status']}**",
         f"- **Aggregate score:** {_format_score(run['aggregate_score'])}",
         f"- **Event chain:** {'valid' if chain['valid'] else 'INVALID'} — {chain['detail']}",
@@ -46,15 +48,19 @@ def render_run_markdown(store: EventStore, run_id: str) -> str:
         "",
         "## Checks",
         "",
-        "| Dimension | Check | Score | Result | Gate | Summary |",
-        "| --- | --- | ---: | --- | --- | --- |",
+        "| Dimension | Check | Scorer | Score | Result | Gate | Summary |",
+        "| --- | --- | --- | ---: | --- | --- | --- |",
     ]
     for score in scores:
         result = "PASS" if score["passed"] else "FAIL"
         gate = "hard" if score["hard_gate"] else "soft"
         summary = str(score["summary"]).replace("|", "\\|")
+        # The scorer and its revision belong beside the number they produced. A report
+        # that shows only the score invites the reader to compare it with one taken a
+        # month earlier, which is the mistake the pin exists to prevent.
+        scorer = f"`{score['check_type']}@{_revision_label(score.get('scorer_revision'))}`"
         lines.append(
-            f"| {score['dimension']} | `{score['check_id']}` | "
+            f"| {score['dimension']} | `{score['check_id']}` | {scorer} | "
             f"{score['score']:.3f} | {result} | {gate} | {summary} |"
         )
     hard_failures = [
@@ -76,6 +82,42 @@ def render_run_markdown(store: EventStore, run_id: str) -> str:
     return "\n".join(lines)
 
 
+def _assert_comparable_scorers(
+    baseline_scores: dict[str, Any], candidate_scores: dict[str, Any]
+) -> None:
+    """Refuse to compare two runs a different scorer produced.
+
+    Pinning the revision is only half the value; the other half is acting on it. A
+    delta between two scores is meaningful only if the same judgement produced both.
+    Otherwise the number reports a change in the ruler as though it were a change in
+    the thing measured -- and it reports it in exactly the same shape, so nobody can
+    tell by looking.
+
+    A run recorded before revisions were pinned carries none. That is not treated as a
+    match: unknown is not equal, and comparing against it is the case this exists to
+    stop. The message says which check and which revisions, because "not comparable" on
+    its own leaves the reader nothing to act on.
+    """
+    mismatches: list[str] = []
+    for check_id in sorted(set(baseline_scores) & set(candidate_scores)):
+        before = baseline_scores[check_id].get("scorer_revision")
+        after = candidate_scores[check_id].get("scorer_revision")
+        if before != after or before is None:
+            mismatches.append(
+                f"{check_id}: baseline={_revision_label(before)} "
+                f"candidate={_revision_label(after)}"
+            )
+    if mismatches:
+        raise ValueError(
+            "Runs were scored by different scorer revisions and are not comparable: "
+            + "; ".join(mismatches)
+        )
+
+
+def _revision_label(revision: Any) -> str:
+    return "unrecorded" if revision is None else str(revision)
+
+
 def compare_payload(
     store: EventStore, baseline_run_id: str, candidate_run_id: str
 ) -> dict[str, Any]:
@@ -87,6 +129,14 @@ def compare_payload(
         raise ValueError("Runs must use the same scenario_version")
     baseline_scores = {item["check_id"]: item for item in store.get_scores(baseline_run_id)}
     candidate_scores = {item["check_id"]: item for item in store.get_scores(candidate_run_id)}
+    _assert_comparable_scorers(baseline_scores, candidate_scores)
+    if baseline["harness_revision"] != candidate["harness_revision"] or \
+            baseline["harness_revision"] is None:
+        raise ValueError(
+            "Runs were scored by different evaluation-harness revisions and are not "
+            f"comparable: baseline={_revision_label(baseline['harness_revision'])} "
+            f"candidate={_revision_label(candidate['harness_revision'])}"
+        )
     check_ids = sorted(set(baseline_scores) | set(candidate_scores))
     checks: list[dict[str, Any]] = []
     regressions: list[str] = []
@@ -125,6 +175,11 @@ def compare_payload(
     return {
         "scenario_id": baseline["scenario_id"],
         "scenario_version": baseline["scenario_version"],
+        "scorer_revisions": {
+            check_id: candidate_scores[check_id]["scorer_revision"]
+            for check_id in sorted(set(baseline_scores) & set(candidate_scores))
+        },
+        "harness_revision": candidate["harness_revision"],
         "baseline": baseline,
         "candidate": candidate,
         "status_delta": status_delta,

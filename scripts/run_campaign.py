@@ -70,6 +70,12 @@ def stable_report(case: str) -> tuple[dict, dict]:
         "candidate": result.candidate,
         "scenario_id": result.scenario_id,
         "scenario_version": result.scenario_version,
+        # A campaign record exists to be cited later, so it has to say which judgement
+        # produced it -- not only which scenario. Per-score revisions are in `scores`;
+        # these two are what a reader compares before treating two campaigns as
+        # measuring the same thing.
+        "scorer_revisions": dict(result.scorer_revisions),
+        "harness_revision": result.harness_revision,
         "status": result.status,
         "aggregate_score": result.aggregate_score,
         "scenario_sha256": sha256_text(canonical_json(scenario_raw)),
@@ -89,6 +95,7 @@ def markdown(report: dict) -> str:
         f"- Status: **{report['status']}**",
         f"- Aggregate score: {report['aggregate_score']:.3f}",
         f"- Scenario: `{report['scenario_id']}@{report['scenario_version']}`",
+        f"- Evaluation harness: revision {report['harness_revision']}",
         f"- Scenario SHA-256: `{report['scenario_sha256']}`",
         f"- Candidate-output SHA-256: `{report['candidate_output_sha256']}`",
         f"- Disposable event-store gate: {report['event_store_gate']}",
