@@ -247,6 +247,10 @@ class CandidateOutput:
 class ScoreResult:
     check_id: str
     check_type: str
+    # The exact revision of the scorer that produced this score. A score without one is
+    # not interpretable later: the same check_type can mean two different things a month
+    # apart, and nothing in the record would say which one ran.
+    scorer_revision: int
     dimension: str
     score: float
     passed: bool
@@ -269,6 +273,14 @@ class EvaluationResult:
     started_at: str
     completed_at: str
     scores: tuple[ScoreResult, ...]
+    # The revisions of the scorers this evaluation actually used, keyed by check type.
+    # Deliberately what was *used* rather than the whole registry: adding a fourteenth
+    # scorer does not change what a run that used three of them means, and a digest over
+    # the registry would report those two runs as incomparable when they are not.
+    scorer_revisions: Mapping[str, int] = field(default_factory=dict)
+    # The revision of the code that turned those scores into this status and aggregate.
+    # A run that pins its scorers but not this still cites a moving target.
+    harness_revision: int | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

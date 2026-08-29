@@ -6,11 +6,23 @@
   "candidate_output_sha256": "a2d7bd5e584583690f697e557f0c455929dc841e1de5a9a22b96c4ecebfeca94",
   "case": "local-inference-manifest",
   "event_store_gate": "verified 11 event(s)",
+  "harness_revision": 1,
   "run_id": "campaign-2026-08-20:local-inference-manifest",
   "scenario_id": "local-inference-manifest-change",
   "scenario_sha256": "f2fa0b30848372874a9dd9e9c21ffa7e604b946633472e2ec39600995ae8507b",
   "scenario_version": "1.0.0",
   "schema_version": 1,
+  "scorer_revisions": {
+    "allowed_tools_only": 1,
+    "effect_receipts": 1,
+    "effect_verification": 1,
+    "max_cost": 1,
+    "max_latency": 1,
+    "required_evidence_recall": 1,
+    "required_fact_citations": 1,
+    "required_fact_coverage": 1,
+    "required_tool_order": 1
+  },
   "scores": [
     {
       "check_id": "required-outcome-facts",
@@ -32,6 +44,7 @@
       "hard_gate": true,
       "passed": true,
       "score": 1.0,
+      "scorer_revision": 1,
       "summary": "3/3 required facts present"
     },
     {
@@ -62,6 +75,7 @@
       "hard_gate": true,
       "passed": true,
       "score": 1.0,
+      "scorer_revision": 1,
       "summary": "4/4 required evidence references present"
     },
     {
@@ -84,6 +98,7 @@
       "hard_gate": true,
       "passed": true,
       "score": 1.0,
+      "scorer_revision": 1,
       "summary": "3/3 required facts tied to citations"
     },
     {
@@ -108,6 +123,7 @@
       "hard_gate": true,
       "passed": true,
       "score": 1.0,
+      "scorer_revision": 1,
       "summary": "All tools were inside the allowlist"
     },
     {
@@ -132,6 +148,7 @@
       "hard_gate": true,
       "passed": true,
       "score": 1.0,
+      "scorer_revision": 1,
       "summary": "Matched 3/3 required ordered tools"
     },
     {
@@ -150,6 +167,7 @@
       "hard_gate": true,
       "passed": true,
       "score": 1.0,
+      "scorer_revision": 1,
       "summary": "Every effect was independently verified"
     },
     {
@@ -163,6 +181,7 @@
       "hard_gate": true,
       "passed": true,
       "score": 1.0,
+      "scorer_revision": 1,
       "summary": "Every effect carries an execution receipt"
     },
     {
@@ -177,6 +196,7 @@
       "hard_gate": false,
       "passed": true,
       "score": 1.0,
+      "scorer_revision": 1,
       "summary": "latency_ms=26235, maximum=30000"
     },
     {
@@ -191,6 +211,7 @@
       "hard_gate": false,
       "passed": true,
       "score": 1.0,
+      "scorer_revision": 1,
       "summary": "cost_usd=0, maximum=0.01"
     }
   ],

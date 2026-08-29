@@ -65,7 +65,9 @@ class EventStore:
                     completed_at TEXT,
                     metadata_json TEXT NOT NULL,
                     scenario_hash TEXT NOT NULL,
-                    output_hash TEXT NOT NULL
+                    output_hash TEXT NOT NULL,
+                    scorer_revisions_json TEXT NOT NULL DEFAULT '{}',
+                    harness_revision INTEGER
                 );
 
                 CREATE TABLE IF NOT EXISTS projection_scores (
@@ -78,6 +80,7 @@ class EventStore:
                     hard_gate INTEGER NOT NULL,
                     summary TEXT NOT NULL,
                     details_json TEXT NOT NULL,
+                    scorer_revision INTEGER,
                     PRIMARY KEY (run_id, check_id),
                     FOREIGN KEY (run_id) REFERENCES projection_runs(run_id)
                         ON DELETE CASCADE
@@ -87,7 +90,28 @@ class EventStore:
                     ON projection_scores(run_id, dimension);
                 """
             )
+            self._widen_projections(connection)
             connection.commit()
+
+    # Projections are disposable by design, so a store written before the scorer columns
+    # existed is widened in place and rebuilt rather than migrated. The event log is the
+    # authority and is never touched here.
+    _PROJECTION_COLUMNS = (
+        ("projection_runs", "scorer_revisions_json", "TEXT NOT NULL DEFAULT '{}'"),
+        ("projection_runs", "harness_revision", "INTEGER"),
+        ("projection_scores", "scorer_revision", "INTEGER"),
+    )
+
+    def _widen_projections(self, connection: sqlite3.Connection) -> bool:
+        widened = False
+        for table, column, declaration in self._PROJECTION_COLUMNS:
+            existing = {
+                row["name"] for row in connection.execute(f"PRAGMA table_info({table})")
+            }
+            if column not in existing:
+                connection.execute(f"ALTER TABLE {table} ADD COLUMN {column} {declaration}")
+                widened = True
+        return widened
 
     @staticmethod
     def _event_hash(
@@ -199,6 +223,8 @@ class EventStore:
                         "metadata": dict(result.metadata),
                         "scenario_hash": scenario_hash,
                         "output_hash": output_hash,
+                        "scorer_revisions": dict(result.scorer_revisions),
+                        "harness_revision": result.harness_revision,
                         "scenario_snapshot": scenario_record,
                         "output_snapshot": output_record,
                     },
@@ -290,8 +316,9 @@ class EventStore:
                             INSERT INTO projection_runs(
                                 run_id, scenario_id, scenario_version, candidate,
                                 status, aggregate_score, started_at, completed_at,
-                                metadata_json, scenario_hash, output_hash
-                            ) VALUES (?, ?, ?, ?, NULL, NULL, ?, NULL, ?, ?, ?)
+                                metadata_json, scenario_hash, output_hash,
+                                scorer_revisions_json, harness_revision
+                            ) VALUES (?, ?, ?, ?, NULL, NULL, ?, NULL, ?, ?, ?, ?, ?)
                             """,
                             (
                                 payload["run_id"],
@@ -302,6 +329,12 @@ class EventStore:
                                 canonical_json(payload.get("metadata", {})),
                                 payload["scenario_hash"],
                                 payload["output_hash"],
+                                # A run recorded before revisions were pinned has none,
+                                # and rebuilding must not invent one. An empty map reads
+                                # as "unrecorded", which is the truth about that run and
+                                # is what makes it refuse to compare against a pinned one.
+                                canonical_json(payload.get("scorer_revisions", {})),
+                                payload.get("harness_revision"),
                             ),
                         )
                     elif event_type == "score.recorded":
@@ -309,8 +342,9 @@ class EventStore:
                             """
                             INSERT INTO projection_scores(
                                 run_id, check_id, check_type, dimension, score,
-                                passed, hard_gate, summary, details_json
-                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                passed, hard_gate, summary, details_json,
+                                scorer_revision
+                            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                             """,
                             (
                                 payload["run_id"],
@@ -322,6 +356,7 @@ class EventStore:
                                 int(payload["hard_gate"]),
                                 payload["summary"],
                                 canonical_json(payload.get("details", {})),
+                                payload.get("scorer_revision"),
                             ),
                         )
                     elif event_type == "run.completed":

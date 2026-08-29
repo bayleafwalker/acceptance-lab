@@ -16,6 +16,10 @@ runtime, generic observability product, or model-judge framework.
 - Retrieval is one example workload. Do not turn the package into a RAG framework.
 - SQLite is the local authority. Projections are disposable and must rebuild from
   events.
+- Changing a scorer, `score_candidate` or `evaluate_candidate` changes what every
+  recorded verdict means. Bump the revision and regenerate `scorer_revisions.json`
+  in the same commit -- never regenerate the lock alone, which records the change
+  while erasing the fact that it happened.
 - Do not extract this into Vuoro until at least two real consumers need the same
   event contract.
 

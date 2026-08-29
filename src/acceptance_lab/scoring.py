@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Callable, Mapping
 from uuid import uuid4
@@ -254,35 +255,78 @@ def _max_cost(
     return _max_metric(output, check, "cost_usd", "max_usd")
 
 
-SCORERS: dict[str, Scorer] = {
-    "required_fact_coverage": _required_fact_coverage,
-    "forbidden_fact_absence": _forbidden_fact_absence,
-    "required_evidence_recall": _required_evidence_recall,
-    "forbidden_authority_absence": _forbidden_authority_absence,
-    "required_fact_citations": _required_fact_citations,
-    "abstention_match": _abstention_match,
-    "allowed_tools_only": _allowed_tools_only,
-    "forbidden_tools_absent": _forbidden_tools_absent,
-    "required_tool_order": _required_tool_order,
-    "effect_verification": _effect_verification,
-    "effect_receipts": _effect_receipts,
-    "max_latency": _max_latency,
-    "max_cost": _max_cost,
-}
+@dataclass(frozen=True)
+class ScorerSpec:
+    """One scorer, and the revision of it that ran.
+
+    A revision is a plain integer, not a semantic version, because a scorer has no
+    backwards-compatible change: any edit to what it measures can flip a verdict that
+    was already recorded and cited. There is no such thing as a patch release of a
+    judgement. Bumping this is therefore a deliberate act, and
+    `scorer_revisions.json` is the lock that makes forgetting to bump it a test
+    failure rather than a silent rewrite of history.
+    """
+
+    name: str
+    revision: int
+    scorer: Scorer
+
+
+def _spec(name: str, revision: int, scorer: Scorer) -> tuple[str, ScorerSpec]:
+    return name, ScorerSpec(name=name, revision=revision, scorer=scorer)
+
+
+# Revision 1 is the state these scorers shipped in. It is recorded rather than assumed:
+# an evaluation produced before this file existed carries no revision at all, and the
+# reader must be able to tell "revision 1" from "unrecorded".
+SCORERS: dict[str, ScorerSpec] = dict(
+    (
+        _spec("required_fact_coverage", 1, _required_fact_coverage),
+        _spec("forbidden_fact_absence", 1, _forbidden_fact_absence),
+        _spec("required_evidence_recall", 1, _required_evidence_recall),
+        _spec("forbidden_authority_absence", 1, _forbidden_authority_absence),
+        _spec("required_fact_citations", 1, _required_fact_citations),
+        _spec("abstention_match", 1, _abstention_match),
+        _spec("allowed_tools_only", 1, _allowed_tools_only),
+        _spec("forbidden_tools_absent", 1, _forbidden_tools_absent),
+        _spec("required_tool_order", 1, _required_tool_order),
+        _spec("effect_verification", 1, _effect_verification),
+        _spec("effect_receipts", 1, _effect_receipts),
+        _spec("max_latency", 1, _max_latency),
+        _spec("max_cost", 1, _max_cost),
+    )
+)
+
+
+def scorer_revisions() -> dict[str, int]:
+    """Every scorer this build can run, and at which revision."""
+    return {name: spec.revision for name, spec in SCORERS.items()}
+
+
+# The scorers are not the whole judgement. `score_candidate` decides whether a score
+# clears its threshold, and `evaluate_candidate` decides PASS / CONDITIONAL / FAIL and
+# how the aggregate is formed. Change either and every recorded verdict means something
+# new, with no scorer having moved at all -- so pinning the thirteen callables and
+# stopping there would leave the same hole in a smaller place. Found by testing the
+# scorer lock with the wrong kind of edit: flipping `>=` to `>` in score_candidate
+# rewrote every verdict and the lock stayed green.
+EVALUATION_HARNESS_REVISION = 1
+HARNESS_FUNCTIONS = ("score_candidate", "evaluate_candidate")
 
 
 def score_candidate(scenario: Scenario, output: CandidateOutput) -> tuple[ScoreResult, ...]:
     results: list[ScoreResult] = []
     for check in scenario.checks:
-        scorer = SCORERS.get(check.type)
-        if scorer is None:
+        spec = SCORERS.get(check.type)
+        if spec is None:
             raise ValueError(f"Unknown scorer type: {check.type}")
-        score, summary, details = scorer(scenario, output, check)
+        score, summary, details = spec.scorer(scenario, output, check)
         bounded_score = min(1.0, max(0.0, float(score)))
         results.append(
             ScoreResult(
                 check_id=check.id,
                 check_type=check.type,
+                scorer_revision=spec.revision,
                 dimension=check.dimension,
                 score=bounded_score,
                 passed=bounded_score >= check.threshold,
@@ -329,5 +373,9 @@ def evaluate_candidate(
         started_at=started_at,
         completed_at=completed_at,
         scores=scores,
+        # Only the scorers this run actually used. See EvaluationResult for why the
+        # whole registry would be the wrong thing to pin.
+        scorer_revisions={score.check_type: score.scorer_revision for score in scores},
+        harness_revision=EVALUATION_HARNESS_REVISION,
         metadata=dict(metadata or {}),
     )

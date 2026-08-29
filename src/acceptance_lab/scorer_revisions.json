@@ -1,0 +1,62 @@
+{
+  "schema_version": "acceptance-lab/scorer-lock/v1",
+  "description": "Behavioural digest per scorer, over the parsed syntax with docstrings removed. Regenerate with: python -m acceptance_lab.scorer_digest",
+  "scorers": {
+    "required_fact_coverage": {
+      "revision": 1,
+      "digest": "e8b1c9ae54e1047f731051a1dcd5800fcb63a5537423fe4f2e007b7bde669ebb"
+    },
+    "forbidden_fact_absence": {
+      "revision": 1,
+      "digest": "a2393d5fbea01d7a0fc3c23f9a9c0adc1cd7c0fbc76b9957118c1999aad01091"
+    },
+    "required_evidence_recall": {
+      "revision": 1,
+      "digest": "0880976a12c4e3052f1e45186cab5941fd146ba68031c6674d9b180178a0cd6f"
+    },
+    "forbidden_authority_absence": {
+      "revision": 1,
+      "digest": "09f8f58aee158314313d0a73254cb0b5dabfe94462037069b99a6272a6a7154f"
+    },
+    "required_fact_citations": {
+      "revision": 1,
+      "digest": "5e97f25dd35b88818f32101f035a8a102f79fad666ad64a218eb2472db6651e6"
+    },
+    "abstention_match": {
+      "revision": 1,
+      "digest": "a1808020d0d62290428565320dc87e06e22b9aed4bcc51eb93d239032c5d2e15"
+    },
+    "allowed_tools_only": {
+      "revision": 1,
+      "digest": "f314f410a77a1544d262d5b0233d2e5601dbc670e7016b89fbeb7c0ea181cb6d"
+    },
+    "forbidden_tools_absent": {
+      "revision": 1,
+      "digest": "27bb786d4f338f57730792ece2cc2cb2d7c651908e95cc4f99d84a02ed7c7d51"
+    },
+    "required_tool_order": {
+      "revision": 1,
+      "digest": "b6ad614845d5e8408ca2a3d260006b122340a58d05ad2f62805a3b7b84179f43"
+    },
+    "effect_verification": {
+      "revision": 1,
+      "digest": "1200f8fe68bc9533b417d5e71ceb86775f83bd211d2a6db77ee5dd8a8b223fda"
+    },
+    "effect_receipts": {
+      "revision": 1,
+      "digest": "c2c7ebc4c94ca5ea1e15c9a1f4ce8bda0b045672783c7f8c0b493f2f236bbe73"
+    },
+    "max_latency": {
+      "revision": 1,
+      "digest": "5493fa96d995f414387efb0defb8b7f9ba2ad1dc9233af6fd266e4a23ea87eb7"
+    },
+    "max_cost": {
+      "revision": 1,
+      "digest": "7254b33da993a34953bba57cbe1c06b2a934ba12a15c6cf6ca348ecb0d62f7d1"
+    }
+  },
+  "evaluation_harness": {
+    "revision": 1,
+    "digest": "4f6323b26d670bc187f71062c2daec4e59d4e4f569c62ebeff21d187de0a8360"
+  }
+}

@@ -36,4 +36,4 @@ package-dir = { "" = "src" }
 where = ["src"]
 
 [tool.setuptools.package-data]
-acceptance_lab = ["demo_assets/*.json"]
+acceptance_lab = ["demo_assets/*.json", "scorer_revisions.json"]
