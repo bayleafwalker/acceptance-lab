@@ -1,26 +1,27 @@
 {
   "schema_version": "acceptance-lab/scorer-lock/v1",
-  "description": "Behavioural digest per scorer, over the parsed syntax with docstrings removed. Regenerate with: python -m acceptance_lab.scorer_digest",
+  "description": "Behavioural digest per scorer, over the parsed syntax with docstrings removed, covering the scorer and the package-local functions it calls. Regenerate with: python -m acceptance_lab.scorer_digest",
+  "digest_algorithm": 2,
   "scorers": {
     "required_fact_coverage": {
       "revision": 1,
-      "digest": "3199b5b86e5970cf93036e228cea60ef7208b9164c7465b63262b20268f1eceb"
+      "digest": "9db16a9d9e63fb7d51957d396205c291e93021f0ac738043854956379c17a189"
     },
     "forbidden_fact_absence": {
       "revision": 1,
-      "digest": "8b26cb9cb92d6f7061c0621d2524e1cd287cb41da62c5b2dc09c5b5e83345544"
+      "digest": "70de9429830460d960a39391832075207eba1bd2c39cf0af95b98a2c1ed04a81"
     },
     "required_evidence_recall": {
       "revision": 1,
-      "digest": "e68ca677709796044f5c22140d7ce730ba62779cb627f46f552d0af3ee40f2d1"
+      "digest": "ee2fff45016b4df0f6b4d6c801b6e742467993e7d6b6cee3d71b0031db701706"
     },
     "forbidden_authority_absence": {
       "revision": 1,
-      "digest": "041a82009b86e8d5a123381002c2e8e55a526a50d916124d8d6a2782890c4b57"
+      "digest": "1781f0cb567b4b95579c0c41529c3523b991c1620b30e2b95ee2558c3a7daa41"
     },
     "required_fact_citations": {
       "revision": 1,
-      "digest": "184908b4b5354b6d224632511582e87cc2ba5a0069bb3e8f876c38a3c1c0ecaf"
+      "digest": "ea86258928de331858ad111ef2e4a5f726632ccf105beaabb5bb04d50753845a"
     },
     "abstention_match": {
       "revision": 1,
@@ -28,31 +29,31 @@
     },
     "allowed_tools_only": {
       "revision": 2,
-      "digest": "428a4a8a797501bbef87e5ac4b142a4aa110a841e15a0fabe7519c95a060d240"
+      "digest": "0a75ff8b6af5dbb38b92103fbf1e86a6d927d91068a3655cb16f690e87029108"
     },
     "forbidden_tools_absent": {
       "revision": 1,
-      "digest": "30f0a379ca8b679e6d8c701eb28d368365f6d1a9b0221fd3633dec04877dd0e4"
+      "digest": "bdeb8ca23f39fadb4b36915fc2507c5b296e63cd281a8b7d7167336f6a6b2164"
     },
     "required_tool_order": {
       "revision": 1,
-      "digest": "16c9eb14edcda2ea23912ca1f0fa55e6e81e4724e408cb3dc873f5cd5efad0ac"
+      "digest": "d9acb250133b7cc5792f852dbe76a84936793cd985188c47d61e7b0a0684179d"
     },
     "effect_verification": {
       "revision": 2,
-      "digest": "caf40627680692d8c0921c2ed4415c3ba0e861cdcde536936794bdf092e33dce"
+      "digest": "7422f7534fffb46808291f519fd0b2f1da25d10c1b65edbd737e5fbf3b35f9d1"
     },
     "effect_receipts": {
       "revision": 2,
-      "digest": "2299fc64998be0574f6987ce79acc59e84d94119bc24fe7af59e6fcced0da11f"
+      "digest": "91efc9802f3d011f04e50808e610fc1378c84b800c0b3f49ffbd9549c5ab6b39"
     },
     "max_latency": {
       "revision": 1,
-      "digest": "b513f5d184ccfacc9235abedc515ceabc46a57b26f2c8d658a4e5603cb0b1c26"
+      "digest": "efdce75499767b16c9261a6091df639e9a4eca4e5e77576bc2a6c8de4124539a"
     },
     "max_cost": {
       "revision": 1,
-      "digest": "3fecdb30adda38934a4e19195e9a3189ff494538e6b34079e8cb558da50a0fdc"
+      "digest": "3bd1208cc85b9a9d695b17dd41b2ad00147df7ac3cd8dcfa5619923fd96f1766"
     }
   },
   "evaluation_harness": {

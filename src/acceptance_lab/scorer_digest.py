@@ -62,14 +62,94 @@ def digest_source(source: str) -> str:
     return hashlib.sha256(ast.unparse(tree).encode()).hexdigest()
 
 
+#: Bumped when the digest *algorithm* changes, so a moved digest can be read.
+#:
+#: Without it, regenerating the lock after an algorithm change is indistinguishable in
+#: the diff from thirteen scorers all changing behaviour at once, and a reviewer has no
+#: way to tell which happened. Unknown is not equal.
+DIGEST_ALGORITHM = 2
+
+PACKAGE = "acceptance_lab"
+
+
+def _called_names(tree: ast.AST) -> set[str]:
+    """Every global name this source calls, including through a module attribute."""
+    names: set[str] = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if isinstance(func, ast.Name):
+            names.add(func.id)
+        elif isinstance(func, ast.Attribute) and isinstance(func.value, ast.Name):
+            names.add(f"{func.value.id}.{func.attr}")
+    return names
+
+
+def _resolve(name: str, namespace: Mapping[str, Any]) -> Any:
+    head, _, attr = name.partition(".")
+    obj = namespace.get(head)
+    return getattr(obj, attr, None) if attr else obj
+
+
+def closure_functions(function: Any) -> list[Any]:
+    """The package-local functions this one calls, transitively, in a stable order.
+
+    Resolved through `__globals__` rather than by matching names in the syntax tree,
+    because a name only means something relative to the namespace it is looked up in,
+    and guessing that is how a lock ends up pinning the wrong thing.
+
+    The boundary is this package. Standard-library and third-party callees are excluded:
+    locking them would claim a guarantee this file cannot keep, since their source can
+    change under a dependency bump this repository never sees.
+
+    **Classes are deliberately excluded**, and that is a residual gap rather than a
+    decision that costs nothing. A dataclass field rename in `models` can change what a
+    scorer reads while every digest here stays still. Including them would make every
+    model edit bump all thirteen digests, and a lock that cries wolf gets regenerated
+    without being read, which is the failure it exists to prevent. The narrower claim is
+    the one worth being able to trust.
+    """
+    seen: dict[tuple[str, str], Any] = {}
+    pending = [function]
+    while pending:
+        current = pending.pop()
+        namespace = getattr(current, "__globals__", {})
+        try:
+            tree = ast.parse(textwrap.dedent(inspect.getsource(current)))
+        except (OSError, TypeError, SyntaxError):
+            continue
+        for name in _called_names(tree):
+            candidate = _resolve(name, namespace)
+            if not inspect.isfunction(candidate):
+                continue
+            module = getattr(candidate, "__module__", "") or ""
+            if module != PACKAGE and not module.startswith(f"{PACKAGE}."):
+                continue
+            key = (module, candidate.__qualname__)
+            if key in seen or candidate is function:
+                continue
+            seen[key] = candidate
+            pending.append(candidate)
+    return [seen[key] for key in sorted(seen)]
+
+
 def scorer_digest(function: Any) -> str:
-    """A stable digest of what a scorer computes.
+    """A stable digest of what a scorer computes, including the helpers it computes with.
 
     The function's own name is inside the digest, deliberately. Renaming a scorer is a
     change to the thing an evaluation cites by name, and the failure direction of
     including it -- one unnecessary revision bump -- is the harmless one.
+
+    Until 2026-08-30 this digested the scorer's own source and nothing else, which left
+    the lock open exactly where it mattered: ten of the thirteen scorers reach their
+    verdict through `_ratio`, so editing that one function would have changed what all
+    ten measure while every digest stayed green and the drift test passed. A lock that
+    covers the caller but not the computation locks the signature, not the meaning.
     """
-    return digest_source(inspect.getsource(function))
+    sources = [inspect.getsource(function)]
+    sources += [inspect.getsource(helper) for helper in closure_functions(function)]
+    return digest_source("\n".join(sources))
 
 
 def current_lock() -> dict[str, dict[str, Any]]:
@@ -119,13 +199,29 @@ def recorded_lock() -> Mapping[str, Mapping[str, Any]]:
     return value["scorers"]
 
 
+def recorded_algorithm() -> int:
+    """The algorithm the committed digests were taken with.
+
+    Read separately from the digests so a mismatch reports the real cause. A digest that
+    moved because the algorithm changed and one that moved because a scorer changed look
+    identical in the lock, and only one of them means a revision should bump.
+    """
+    text = resources.files("acceptance_lab").joinpath(LOCK_FILENAME).read_text(encoding="utf-8")
+    value = json.loads(text).get("digest_algorithm")
+    if not isinstance(value, int):
+        raise ValueError(f"{LOCK_FILENAME} must carry an integer 'digest_algorithm'")
+    return value
+
+
 def lock_document() -> dict[str, Any]:
     return {
         "schema_version": "acceptance-lab/scorer-lock/v1",
         "description": (
             "Behavioural digest per scorer, over the parsed syntax with docstrings "
-            "removed. Regenerate with: python -m acceptance_lab.scorer_digest"
+            "removed, covering the scorer and the package-local functions it calls. "
+            "Regenerate with: python -m acceptance_lab.scorer_digest"
         ),
+        "digest_algorithm": DIGEST_ALGORITHM,
         "scorers": current_lock(),
         "evaluation_harness": current_harness_lock(),
     }

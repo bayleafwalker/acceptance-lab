@@ -24,6 +24,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from acceptance_lab import scorer_digest as scorer_digest_module
+from acceptance_lab import scoring
 from acceptance_lab.models import CandidateOutput, Scenario
 from acceptance_lab.reporting import compare_payload, render_run_markdown
 from acceptance_lab.scorer_digest import (
@@ -362,4 +364,74 @@ class DigestPortabilityTests(unittest.TestCase):
         self.assertNotEqual(
             hashlib.sha256(ast.dump(tree).encode()).hexdigest(),
             digest_source(source),
+        )
+
+
+class ScorerLockClosesOverHelpersTests(unittest.TestCase):
+    """The lock must cover the computation, not only the function that signs for it.
+
+    Ten of the thirteen scorers reach their verdict through `_ratio`. Until 2026-08-30 the
+    digest was taken over each scorer's own source alone, so editing `_ratio` would have
+    changed what all ten measure while every digest stayed green and the drift test passed.
+    """
+
+    def test_the_closure_reaches_helpers_across_the_package(self) -> None:
+        names = {
+            helper.__qualname__
+            for helper in scorer_digest_module.closure_functions(SCORERS["required_fact_coverage"].scorer)
+        }
+        # `_ratio` is module-local; `normalized_set` lives in models. A closure that stops
+        # at the module boundary would find the first and miss the second.
+        self.assertIn("_ratio", names)
+        self.assertIn("normalized_set", names)
+
+    def test_editing_a_shared_helper_moves_every_digest_that_uses_it(self) -> None:
+        """The mutation the old lock could not see."""
+        before = {name: scorer_digest_module.scorer_digest(spec.scorer) for name, spec in SCORERS.items()}
+
+        original = scoring._ratio
+
+        def _ratio(found: int, total: int) -> float:
+            if total == 0:
+                return 1.0  # the vacuous pass this repository removed
+            return found / total
+
+        scoring._ratio = _ratio
+        try:
+            after = {name: scorer_digest_module.scorer_digest(spec.scorer) for name, spec in SCORERS.items()}
+        finally:
+            scoring._ratio = original
+
+        moved = {name for name in before if before[name] != after[name]}
+        self.assertGreaterEqual(
+            len(moved), 5, f"editing _ratio moved only {len(moved)} digest(s): {sorted(moved)}"
+        )
+        self.assertIn("required_fact_coverage", moved)
+
+    def test_a_scorer_that_shares_no_helper_is_unaffected_by_that_edit(self) -> None:
+        """Coverage must be by call graph, not by digesting the whole module.
+
+        A digest over the module would move every entry for any edit anywhere, which
+        reports drift honestly exactly once and then trains a reader to regenerate the
+        lock without looking.
+        """
+        subject = SCORERS["max_latency"].scorer
+        before = scorer_digest_module.scorer_digest(subject)
+
+        original = scoring._params_list
+        try:
+            scoring._params_list = lambda check, key: ()
+            after = scorer_digest_module.scorer_digest(subject)
+        finally:
+            scoring._params_list = original
+
+        self.assertEqual(before, after)
+
+    def test_the_algorithm_version_is_recorded_and_current(self) -> None:
+        """A digest that moved because the algorithm changed is not a scorer that changed.
+
+        Both look identical in the lock, and only one of them means a revision should bump.
+        """
+        self.assertEqual(
+            scorer_digest_module.recorded_algorithm(), scorer_digest_module.DIGEST_ALGORITHM
         )
