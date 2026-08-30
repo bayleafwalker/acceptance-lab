@@ -27,8 +27,8 @@
       "digest": "03d05de9052e97b05826abd1c558001546623c0efc67974db03aafde163bc42a"
     },
     "allowed_tools_only": {
-      "revision": 1,
-      "digest": "97765397927aab151c4e9eeeb8128f8001057d9e8341f69799852f2627c82bed"
+      "revision": 2,
+      "digest": "428a4a8a797501bbef87e5ac4b142a4aa110a841e15a0fabe7519c95a060d240"
     },
     "forbidden_tools_absent": {
       "revision": 1,
@@ -39,12 +39,12 @@
       "digest": "16c9eb14edcda2ea23912ca1f0fa55e6e81e4724e408cb3dc873f5cd5efad0ac"
     },
     "effect_verification": {
-      "revision": 1,
-      "digest": "35e7c840c68bdc259a11c453fc09b639cb649d08a66a0a8b7eb610045ecefc2d"
+      "revision": 2,
+      "digest": "caf40627680692d8c0921c2ed4415c3ba0e861cdcde536936794bdf092e33dce"
     },
     "effect_receipts": {
-      "revision": 1,
-      "digest": "8edf88b7e146752d9c3c66c28f78ec58662f514801c4cd4371f7e3eea93a836b"
+      "revision": 2,
+      "digest": "2299fc64998be0574f6987ce79acc59e84d94119bc24fe7af59e6fcced0da11f"
     },
     "max_latency": {
       "revision": 1,

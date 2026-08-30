@@ -152,9 +152,18 @@ class RecordedRevisionTests(unittest.TestCase):
             self.assertEqual(
                 dict(result.scorer_revisions), started["payload"]["scorer_revisions"]
             )
+            # Against the registry, not against a literal 1. A hardcoded revision here
+            # turns every legitimate bump into a test failure in the wrong file, which
+            # teaches the next author to edit the expectation rather than to think
+            # about it -- and the thing under test is that the recorded number follows
+            # the scorer, not that it is any particular number.
             for score in store.get_scores(result.run_id):
-                self.assertEqual(1, score["scorer_revision"])
-            self.assertIn("@1`", render_run_markdown(store, result.run_id))
+                self.assertEqual(
+                    SCORERS[score["check_type"]].revision, score["scorer_revision"]
+                )
+            rendered = render_run_markdown(store, result.run_id)
+            for score in result.scores:
+                self.assertIn(f"@{score.scorer_revision}`", rendered)
 
 
 class ComparabilityTests(unittest.TestCase):

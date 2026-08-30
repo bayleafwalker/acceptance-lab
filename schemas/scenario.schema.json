@@ -40,7 +40,11 @@
         },
         "threshold": {"type": "number", "minimum": 0, "maximum": 1},
         "hard_gate": {"type": "boolean"},
-        "params": {"type": "object"}
+        "params": {
+          "type": "object",
+          "description": "Scorer-specific parameters. A list-valued parameter is the subject the check is about, and an empty one is refused: a check that declares nothing is satisfied by every candidate, and scores 1.000 for a run that demonstrated nothing.",
+          "additionalProperties": {"not": {"type": "array", "maxItems": 0}}
+        }
       }
     }
   }

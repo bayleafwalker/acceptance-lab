@@ -56,6 +56,37 @@ class CheckSpec:
         params = value.get("params", {})
         if not isinstance(params, dict):
             raise ModelValidationError(f"check[{check_id}].params must be an object")
+        # A check must declare a non-empty subject.
+        #
+        # Every list-valued parameter a scorer reads -- `facts`, `evidence_ids`,
+        # `tools` -- is the subject the check is about. An empty one asserts nothing,
+        # and the scorers then divide by a zero denominator and report 1.000: a check
+        # that demands nothing is trivially satisfied and looks in the record exactly
+        # like a check that was met. That is the same vacuous truth as an empty
+        # candidate subject, arriving from the other side.
+        #
+        # It is refused here, at the contract, rather than in each scorer, because it
+        # is a defect in the scenario rather than in the run. A malformed check is not
+        # a candidate's failure to score against, and the scorers already raise on
+        # malformed params (see `_abstention_match`, `_max_metric`). Refusing it here
+        # also keeps the fix out of the thirteen locked behaviours: no scorer revision
+        # moves for an input that can no longer reach a scorer.
+        for param_name, param_value in params.items():
+            if not isinstance(param_value, list):
+                continue
+            # Blank entries count as absent, because `_params_list` discards them:
+            # `{"facts": ["  "]}` reaches the scorer as an empty requirement and would
+            # otherwise slip past this rule with the vacuous score intact.
+            if not [
+                item
+                for item in param_value
+                if not isinstance(item, str) or item.strip()
+            ]:
+                raise ModelValidationError(
+                    f"check[{check_id}].params.{param_name} is empty; a check must "
+                    "declare a non-empty subject, because an empty one is satisfied "
+                    "by any candidate at all"
+                )
         hard_gate = value.get("hard_gate", False)
         if not isinstance(hard_gate, bool):
             raise ModelValidationError(f"check[{check_id}].hard_gate must be boolean")

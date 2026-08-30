@@ -13,7 +13,7 @@
   "scenario_version": "1.0.0",
   "schema_version": 1,
   "scorer_revisions": {
-    "allowed_tools_only": 1,
+    "allowed_tools_only": 2,
     "forbidden_fact_absence": 1,
     "forbidden_tools_absent": 1,
     "required_evidence_recall": 1,
@@ -131,7 +131,7 @@
       "hard_gate": true,
       "passed": true,
       "score": 1.0,
-      "scorer_revision": 1,
+      "scorer_revision": 2,
       "summary": "All tools were inside the allowlist"
     },
     {

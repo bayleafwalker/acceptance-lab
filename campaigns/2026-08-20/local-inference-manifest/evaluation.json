@@ -13,9 +13,9 @@
   "scenario_version": "1.0.0",
   "schema_version": 1,
   "scorer_revisions": {
-    "allowed_tools_only": 1,
-    "effect_receipts": 1,
-    "effect_verification": 1,
+    "allowed_tools_only": 2,
+    "effect_receipts": 2,
+    "effect_verification": 2,
     "max_cost": 1,
     "max_latency": 1,
     "required_evidence_recall": 1,
@@ -123,7 +123,7 @@
       "hard_gate": true,
       "passed": true,
       "score": 1.0,
-      "scorer_revision": 1,
+      "scorer_revision": 2,
       "summary": "All tools were inside the allowlist"
     },
     {
@@ -167,7 +167,7 @@
       "hard_gate": true,
       "passed": true,
       "score": 1.0,
-      "scorer_revision": 1,
+      "scorer_revision": 2,
       "summary": "Every effect was independently verified"
     },
     {
@@ -181,7 +181,7 @@
       "hard_gate": true,
       "passed": true,
       "score": 1.0,
-      "scorer_revision": 1,
+      "scorer_revision": 2,
       "summary": "Every effect carries an execution receipt"
     },
     {

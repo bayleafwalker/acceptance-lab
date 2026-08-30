@@ -211,6 +211,54 @@ fixture has captured live runner evidence. See
 | `max_latency` | Latency stays inside the declared budget |
 | `max_cost` | Cost stays inside the declared budget |
 
+### An empty subject is not a pass
+
+A check scores what it can see. When there is nothing to see, the two directions
+part company, and the scorers say which one they are:
+
+- **Coverage checks** — `allowed_tools_only`, `effect_verification`,
+  `effect_receipts` — count something the *candidate did*. A candidate with an
+  empty trajectory, or with no effect in it, scores `0.000` with a summary that
+  says the check is *unestablished*. It previously scored `1.000`: the ratio
+  divided zero violations by zero observations, so a backend that served none of
+  the scenario's operations passed the gate that exists to say which surfaces it
+  touched. Unknown is not equal.
+- **Absence checks** — `forbidden_fact_absence`, `forbidden_authority_absence`,
+  `forbidden_tools_absent` — are satisfied *by* absence. A candidate that cited
+  no superseded source did not cite one, and passes. That is not a vacuous truth,
+  and those scorers are deliberately unchanged.
+- **Requirement checks** — `required_fact_coverage`, `required_evidence_recall`,
+  `required_fact_citations`, `required_tool_order` — divide by the scenario's
+  declared requirement, so an empty candidate already scores `0.000`. Their
+  vacuous case is an empty *declaration*, and a check whose `params` carry an
+  empty list is now refused when the scenario loads, rather than scored.
+
+The consequence stays with the scenario, as for any other check: an unestablished
+hard gate is `FAIL`, an unestablished soft check is `CONDITIONAL`. The package
+does not add a fourth promotion state for it, and a scorer that cannot tell
+"clean" from "empty" now says so in its summary instead of reporting a number it
+cannot support.
+
+### `campaigns/` holds regenerable fixtures, not settlement records
+
+`scripts/run_campaign.py` re-derives every file under `campaigns/<date>/` from the
+current build and `make campaign` fails when the committed bytes differ. So these
+are **build outputs**, and their directory date names when the case was written,
+not when a score was taken.
+
+That matters because a scorer revision bump forces the choice out into the open: a
+legitimate change to a scorer makes the committed artifact stale, and the only way
+back to green is to regenerate it -- which rewrites the `scorer_revision` integers
+in a file that looks like a dated record of what was scored. Regenerating is the
+right answer *here*, because the mechanism says fixture. It would be the wrong
+answer for a record that settlement cites.
+
+**So do not cite a file under `campaigns/` as evidence of what was scored on a
+date.** An `EvaluationRecord` that settlement depends on has to live somewhere
+nothing regenerates, and this package does not yet have that store. Until it does,
+the pinned `scorer_revisions` on these artifacts describe the build that last
+wrote them, not the build that produced the verdict.
+
 Deterministic checks should stay deterministic. A future model judge may add a
 semantic assessment, but it must not overrule authority, evidence, or execution
 hard gates.
