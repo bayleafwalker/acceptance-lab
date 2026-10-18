@@ -373,3 +373,7 @@ Runnable prototype. It proves the event, scorer, projection, comparison, and
 reporting path with deterministic fixtures. It does **not** yet prove that the
 schema captures a real long-running agent workload without losing material
 trajectory detail.
+
+## Goal-derived delivery roadmap
+
+The [KAOS roadmap](docs/plans/2026-10-18-kaos-roadmap.md) traces ecosystem goals to this project's implementation, product onboarding, dependencies and acceptance work. It records planned scope, not deployed capability.
